@@ -46,7 +46,7 @@ DFIR_Powershell/
 ├── DFIR-Script.ps1              # Core automated triage engine (25+ indicators -> CSV & ZIP)
 ├── Acquisition/                 # Targeted evidence collection (26 scripts)
 ├── Analysis/                    # Threat hunting, persistence, auditing & HTML reporting (15 scripts)
-├── Containment/                 # Host & cloud remediation scripts (3 scripts)
+├── Containment/                 # Host & cloud remediation scripts (6 scripts)
 ├── LICENSE                      # BSD 3-Clause License
 └── README.md                    # Documentation & script catalog
 ```
@@ -129,6 +129,9 @@ The all-in-one triage engine collects forensic indicators across multiple dimens
 
 | Script | Target | Action | Required Permissions |
 |:---|:---|:---|:---|
+| [`Invoke-FullIdentityContainment.ps1`](./Containment/Invoke-FullIdentityContainment.ps1) | **Entra ID / M365** | **Cloud Playbook**: Disable account, revoke sessions, reset password, purge rogue MFA (FIDO2, Authenticator, Phone, TAP), revoke OAuth grants | Graph: `User.ReadWrite.All`, `UserAuthenticationMethod.ReadWrite.All`, `DelegatedPermissionGrant.ReadWrite.All` |
+| [`Isolate-Host.ps1`](./Containment/Isolate-Host.ps1) | **Host / Endpoint** | **Host Isolation**: Emergency firewall isolation (inbound/outbound with SOC whitelist), kill user processes, force session logoff, purge Kerberos tickets & credentials | **Local Administrator** |
+| [`Revoke-ADUserHybrid.ps1`](./Containment/Revoke-ADUserHybrid.ps1) | **Active Directory** | **AD / Hybrid Playbook**: Disable AD account (RSAT / ADSI fallback), reset password, strip admin groups, move to Quarantine OU | **Domain Admin** |
 | [`LocalUserResponse.ps1`](./Containment/LocalUserResponse.ps1) | Local Accounts | List accounts (`-List`), rotate password to random 20-char (`-Rotate <SID>`), kill user processes (`-Kill <SID>`), delete account (`-Delete <SID>`) | Local Administrator |
 | [`RevokeSessions.ps1`](./Containment/RevokeSessions.ps1) | Entra ID / M365 | Instantly invalidates all active OAuth tokens and sign-in sessions for target users | Graph: `User.RevokeSessions.All` |
 | [`ForcePasswordChangeNextSignIn.ps1`](./Containment/ForcePasswordChangeNextSignIn.ps1) | Entra ID / M365 | Generates temporary password & enforces reset on next sign-in | Graph: `UserAuthenticationMethod.ReadWrite.All` |
