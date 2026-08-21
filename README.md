@@ -1,13 +1,5 @@
 # ⚡ DFIR PowerShell - Windows Incident Response & Digital Forensics
 
-```text
-  _____  ______ _____ _____    _____                         _____ _          _ _ 
- |  __ \|  ____|_   _|  __ \  |  __ \                       / ____| |        | | |
- | |  | | |__    | | | |__) | | |__) |____      _____ _ __ | (___ | |__   ___| | |
- | |  | |  __|   | | |  _  /  |  ___/ _ \ \ /\ / / _ \ '__| \___ \| '_ \ / _ \ | |
- | |__| | |     _| |_| | \ \  | |  | (_) \ V  V /  __/ |    ____) | | | |  __/ | |
- |_____/|_|    |_____|_|  \_\ |_|   \___/ \_/\_/ \___|_|   |_____/|_| |_|\___|_|_|
-```
 
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?logo=powershell&logoColor=white)](https://microsoft.com/PowerShell)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)](https://microsoft.com/windows)
