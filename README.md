@@ -1,213 +1,318 @@
-# DFIR Bash - Linux Incident Response & Digital Forensics
-
-[![Bash](https://img.shields.io/badge/Bash-4.0%2B-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
-[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Servers%20%7C%20Workstations-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Forensics](https://img.shields.io/badge/Forensics-RFC%203227%20%7C%20Read--Only-blue)](https://www.ietf.org/rfc/rfc3227.txt)
-[![Threat Intel](https://img.shields.io/badge/Threat%20Intel-STIX%202.1%20%7C%20MISP-orange)](https://oasis-open.github.io/cti-documentation/)
-[![MITRE ATT&CK](https://img.shields.io/badge/MITRE%20ATT%26CK-Linux%20Matrix-red)](https://attack.mitre.org/matrices/enterprise/linux/)
-[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](./LICENSE)
-
-A comprehensive, modular suite of Bash scripts for **Digital Forensics & Incident Response (DFIR)**, **threat hunting**, **evidence acquisition**, **live auditing**, **emergency containment**, and **interactive HTML reporting** on Linux endpoints, Cloud instances (AWS, Azure, GCP), and enterprise servers.
-
----
-
-## ⚡ Quick Start
-
-### 1. Automated Host Triage (`DFIR-Script.sh`)
-
-```bash
-# Automated Full Triage (Default: last 2 days of security events & system logs)
-sudo ./DFIR-Script.sh
-
-# Automated Triage with custom search window (e.g., last 7 days) and auto-compression
-sudo ./DFIR-Script.sh -w 7 -c
-
-# Zero-Footprint best practice: Save evidence directly to an external USB or mount
-sudo ./DFIR-Script.sh -o /mnt/evidence_usb/case_001 -c
-
-# Targeted triage (e.g., Cloud, eBPF, Network, and Process artifacts only)
-sudo ./DFIR-Script.sh -m cloud,ebpf,network,process,security
-```
-
-> 📁 Evidence is saved into `DFIR-<Hostname>-<YYYY-MM-DD_HHMMSS>/` with normalized CSVs, raw artifacts, SHA-256 manifest, and sealed `.tar.gz` archive.
-
-### 2. Generate Interactive HTML Forensic Report (`Generate-DFIRHtmlReport.sh`)
-
-```bash
-# Automatically detects the latest DFIR evidence folder and compiles the standalone HTML dashboard
-./Analysis/Generate-DFIRHtmlReport.sh
-
-# Generate report from a specific evidence folder
-./Analysis/Generate-DFIRHtmlReport.sh "./DFIR-srv-prod-2026-08-22_010000" "Report.html"
-```
-
-### 3. Generate STIX 2.1 Threat Intel Bundle (`Generate-STIXReport.sh`)
-
-```bash
-# Extracts IOCs (hashes, C2 IPs, malicious commands) into STIX 2.1 JSON and MISP/OpenCTI CSV
-./Analysis/Generate-STIXReport.sh "./DFIR-srv-prod-2026-08-22_010000"
-```
-
----
-
-## 📁 Repository Structure
+# ⚡ DFIR PowerShell - Windows Incident Response & Digital Forensics
 
 ```text
-DFIR_bash/
-├── DFIR-Script.sh              # Core automated triage engine (RFC 3227 order of volatility)
-├── Acquisition/                 # Targeted forensic collectors (18 scripts - 100% Read-Only)
-├── Analysis/                    # Threat hunting, MACB timeline, STIX 2.1 & HTML dashboard (11 scripts)
-├── Containment/                 # Emergency network isolation & live response playbooks (6 scripts)
+  _____  ______ _____ _____    _____                         _____ _          _ _ 
+ |  __ \|  ____|_   _|  __ \  |  __ \                       / ____| |        | | |
+ | |  | | |__    | | | |__) | | |__) |____      _____ _ __ | (___ | |__   ___| | |
+ | |  | |  __|   | | |  _  /  |  ___/ _ \ \ /\ / / _ \ '__| \___ \| '_ \ / _ \ | |
+ | |__| | |     _| |_| | \ \  | |  | (_) \ V  V /  __/ |    ____) | | | |  __/ | |
+ |_____/|_|    |_____|_|  \_\ |_|   \___/ \_/\_/ \___|_|   |_____/|_| |_|\___|_|_|
+```
+
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?logo=powershell&logoColor=white)](https://microsoft.com/PowerShell)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)](https://microsoft.com/windows)
+[![MDE Live Response](https://img.shields.io/badge/Defender%20Live%20Response-Supported-00A4EF?logo=microsoft)](https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/live-response)
+[![Forensics](https://img.shields.io/badge/Forensics-RFC%203227%20%7C%20Read--Only-blue)](https://www.ietf.org/rfc/rfc3227.txt)
+[![Threat Intel](https://img.shields.io/badge/Threat%20Intel-STIX%202.1%20%7C%20MISP-orange)](https://oasis-open.github.io/cti-documentation/)
+[![MITRE ATT&CK](https://img.shields.io/badge/MITRE%20ATT%26CK-Windows%20Matrix-red)](https://attack.mitre.org/matrices/enterprise/windows/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](./LICENSE)
+
+A comprehensive, modular suite of PowerShell scripts for **Digital Forensics & Incident Response (DFIR)**, **threat hunting**, **evidence acquisition**, **Active Directory & Cloud containment**, and **interactive HTML reporting** across Windows endpoints, Domain Controllers, and Microsoft 365 / Entra ID environments.
+
+---
+
+## 📋 Table of Contents
+
+- [Overview & Philosophy](#-overview--philosophy)
+- [Key Forensic Principles](#-key-forensic-principles)
+- [Project Architecture](#-project-architecture)
+- [Quick Start Guide](#-quick-start-guide)
+- [Command Line Options](#-command-line-options)
+- [Main Engine (`DFIR-Script.ps1`)](#-main-engine-dfir-scriptps1)
+- [Script Catalog](#-script-catalog)
+  - [1. Acquisition Modules (`Acquisition/`)](#1-acquisition-modules-acquisition)
+  - [2. Analysis & Threat Hunting Modules (`Analysis/`)](#2-analysis--threat-hunting-modules-analysis)
+  - [3. Containment & Remediation (`Containment/`)](#3-containment--remediation-containment)
+- [Interactive Standalone HTML Forensic Dashboard](#-interactive-standalone-html-forensic-dashboard)
+- [Microsoft Defender for Endpoint (MDE) Live Response](#-microsoft-defender-for-endpoint-mde-live-response)
+- [SIEM Integration (CSV Schemas)](#-siem-integration-csv-schemas)
+- [MITRE ATT&CK® Matrix for Windows & Cloud](#-mitre-attck-matrix-for-windows--cloud)
+- [Chain of Custody & Forensic Best Practices](#-chain-of-custody--forensic-best-practices)
+- [License & Attribution](#-license--attribution)
+
+---
+
+## 🔍 Overview & Philosophy
+
+**DFIR PowerShell** is designed to provide incident responders, CERTs, and SOC analysts with a unified, lightweight, and dependency-free toolkit for Windows systems. 
+
+It captures volatile in-memory evidence, extracts raw registry hives, dumps execution artifacts (Prefetch, SRUM, Amcache), audits Active Directory Domain Controllers, automates threat hunting, and generates standalone dark-mode HTML reports—all while strictly adhering to **RFC 3227 Order of Volatility** and **100% Read-Only** collection standards.
+
+---
+
+## 🛡️ Key Forensic Principles
+
+1. **Order of Volatility (RFC 3227)**:
+   - Prioritizes volatile system state: Network sockets & ARP/DNS cache $\rightarrow$ Process memory & execution proofs $\rightarrow$ Active user sessions $\rightarrow$ Event logs (EVTX) $\rightarrow$ Registry hives & Volume Shadow Copies (VSS).
+2. **Forensic Soundness & Zero Footprint**:
+   - Acquisition scripts execute in **Strict Read-Only Mode** without altering target configurations, services, or registry values.
+   - Preserves filesystem MACB (Modified, Accessed, Created, Born) timestamps.
+3. **Chain of Custody & Cryptographic Verification**:
+   - Calculates **SHA-256 hashes** for every collected artifact, generating a machine-readable `manifest.json`.
+   - Packages evidence into a secured `.zip` archive with metadata integrity verification.
+4. **Hermetic Separation with Containment**:
+   - Active containment playbooks (host network isolation, AD account quarantine, Entra ID session revocation, MFA purging) are strictly separated into `Containment/` and must be explicitly invoked by an authorized analyst.
+
+---
+
+## 🏛 Project Architecture
+
+```text
+DFIR_Powershell/
+├── DFIR-Script.ps1              # Core automated triage engine (25+ indicators -> CSV & ZIP)
 ├── LICENSE                      # BSD 3-Clause License
-└── README.md                    # Documentation & complete script catalog
+├── README.md                    # Master documentation & MITRE ATT&CK mapping
+│
+├── Acquisition/                 # 26 Targeted Evidence Collectors (100% Read-Only)
+│   ├── CollectAIArtifacts.ps1                  # AI & LLM desktop chats, configs, API keys (Claude, Cursor, Ollama)
+│   ├── CollectActiveDirectoryArtifacts.ps1     # DC Forensics: NTDS.dit / BootKey, SYSVOL/GPOs, Kerberos attack surface
+│   ├── CollectVPNAndSockets.ps1               # Live TCP/UDP sockets mapped to process commands + VPN configs
+│   ├── CollectSSHArtifacts.ps1                 # Lateral movement: OpenSSH, PuTTY, WinSCP, MobaXterm sessions & keys
+│   ├── CollectExecutionArtifacts.ps1          # Execution proof: Prefetch (.pf), SRUM (SRUDB.dat), BAM/DAM, Amcache
+│   ├── CollectTargetedEvtxLogs.ps1            # Critical EVTX logs (Sysmon, PowerShell 4104, TaskScheduler, RDP)
+│   ├── CollectWindowsEvents.ps1                # Dumps Windows Event Log entries within a configured time window
+│   ├── CollectWindowsSecurityEvents.ps1        # Security logs (Logons 4624/4625, Process Creation 4688, User Mgmt)
+│   ├── DumpRegistryHives.ps1                  # Raw Registry Hives (SAM, SYSTEM, SECURITY, SOFTWARE, NTUSER.DAT)
+│   ├── CollectUserActivity.ps1                 # LNK shortcuts, Jump Lists (AutomaticDestinations), Recent files
+│   ├── CollectNetworkTriage.ps1                # Volatile network state: DNS cache, ARP tables, IP routes, SMB sessions
+│   ├── CollectPSReadLineHistory.ps1            # ConsoleHost_history.txt across all user profiles
+│   ├── CollectRDPArtifacts.ps1                 # RDP client credential hints, Bitmap caches (bcache*.bmc), TS logs
+│   ├── CollectBrowserArtifacts.ps1             # Unified browser collector (Edge, Chrome, Brave, Firefox, Opera)
+│   ├── CollectLocalDefenderAlerts.ps1          # Queries local Defender detection history (Get-MpThreatDetection)
+│   ├── GenerateEvidenceManifest.ps1            # Computes SHA-256 hashes and generates manifest.json for Chain of Custody
+│   ├── FolderToStorageBlob.ps1                 # Direct HTTPS upload of evidence directory to Azure Storage via SAS
+│   ├── ExecuteKQLAdvancedHunting.ps1           # Runs KQL queries against Defender for Endpoint API (Interactive)
+│   ├── ExecuteKQLAdvancedHuntingServicePrincipal.ps1 # Runs KQL queries using Service Principal / App Registration
+│   ├── GetSecurityIncidents.ps1                # Fetches active Microsoft Defender / Sentinel incidents via API
+│   ├── ZipFolder.ps1                           # Compresses evidence folder into ZIP archive
+│   └── Browser Extractors                      # EdgeArtifacts, ChromiumArtifacts, BraveArtifacts, FirefoxArtifacts, OperaArtifacts
+│
+├── Analysis/                    # 15 Threat Hunting, Persistence & Reporting Scripts
+│   ├── Generate-DFIRHtmlReport.ps1             # Standalone dark-mode HTML Forensic Dashboard with KPI cards & alerts
+│   ├── Get-NamedPipes.ps1                      # Enumerates Named Pipes & flags C2 patterns (Cobalt Strike, Sliver, Meterpreter)
+│   ├── Get-WMIPersistence.ps1                  # Audits WMI subscriptions (__EventFilter, CommandLineEventConsumer)
+│   ├── ListRootCertificates.ps1                # Audits Root CA stores to detect rogue CA certificates / MitM proxies
+│   ├── ListInstalledSecurityProducts.ps1       # Discovers AV, AntiSpyware, Firewall products & state via SecurityCenter2
+│   ├── ListDefenderExclusions.ps1              # Lists configured Defender path, extension, and process exclusions
+│   ├── ListVSCodeExtensions.ps1                # Audits installed VS Code & Cursor extensions across user profiles
+│   ├── CollectPnPDevices.ps1                   # Connected & historical PnP/USB devices and hardware IDs
+│   ├── DumpLocalAdmins.ps1                     # Discovers all members of the local Administrators group
+│   ├── LastLogons.ps1                          # Audits last user logon timestamps and interactive sessions
+│   ├── PrefetchFiles.ps1                       # Lists prefetch files (.pf), execution timestamps, and run counts
+│   ├── RunMRUEntries.ps1                       # Extracts Most Recently Used (RunMRU) registry entries
+│   ├── ExportBrowserExtensions.ps1             # Packages installed browser extensions into a ZIP for analysis
+│   └── DFIR-Commands.md                        # Cheatsheet of standalone PowerShell one-liners for live triage
+│
+└── Containment/                 # 6 Host, Active Directory & Cloud Remediation Scripts
+    ├── Invoke-FullIdentityContainment.ps1      # Cloud Playbook: Disable account, revoke sessions, reset PW, purge rogue MFA, OAuth
+    ├── Isolate-Host.ps1                        # Host Isolation: Firewall isolation (in/out + SOC whitelist), kill user procs, logoff
+    ├── Revoke-ADUserHybrid.ps1                 # AD / Hybrid Playbook: Disable AD account, reset PW, strip admin groups, Quarantine OU
+    ├── LocalUserResponse.ps1                   # Local accounts: Rotate password (-Rotate), kill procs (-Kill), delete (-Delete)
+    ├── RevokeSessions.ps1                      # Instantly invalidates all active OAuth tokens & sign-in sessions in Entra ID
+    └── ForcePasswordChangeNextSignIn.ps1       # Generates temporary password & enforces reset on next sign-in
 ```
 
 ---
 
-## 🛠️ Main Engine: `DFIR-Script.sh`
+## ⚡ Quick Start Guide
 
-The all-in-one triage engine collects forensic indicators across multiple dimensions, generates **SIEM-ready CSV files** in `CSV_Results/`, computes a cryptographic **SHA-256 manifest**, and compiles an interactive HTML dashboard.
+### 1. Automated Full Triage (`DFIR-Script.ps1`)
+
+```powershell
+# Automated Full Triage (Default: last 2 days of security events)
+.\DFIR-Script.ps1
+
+# Automated Triage with custom event search window (e.g., last 10 days)
+.\DFIR-Script.ps1 -sw 10
+
+# Bypass execution policy if running in restricted environments
+PowerShell.exe -ExecutionPolicy Bypass -File .\DFIR-Script.ps1 -sw 7
+```
+
+> 📁 Triage evidence is saved in `DFIR-<Hostname>-<Date>/` and automatically archived into a sealed `.zip`.
+
+### 2. Generate Interactive HTML Forensic Report (`Generate-DFIRHtmlReport.ps1`)
+
+```powershell
+# Automatically detects the latest DFIR-* output folder and opens the HTML dashboard
+.\Analysis\Generate-DFIRHtmlReport.ps1 -OpenReport
+
+# Generate report from a specific evidence folder or ZIP archive
+.\Analysis\Generate-DFIRHtmlReport.ps1 -EvidencePath ".\DFIR-HOST-2026-08-21" -OpenReport
+.\Analysis\Generate-DFIRHtmlReport.ps1 -EvidencePath ".\DFIR-HOST-2026-08-21.zip" -OutputFile "Report.html" -OpenReport
+```
+
+---
+
+## ⚙️ Command Line Options
+
+| Parameter | Type | Description | Default |
+|---|---|---|---|
+| `-sw <days>` | Integer | Security event log search window in days | `2` |
+| `-AllUsers` | Switch | Iterates across all user profiles on disk | `$false` |
+| `-OutputDir <path>` | String | Custom output directory for collected artifacts | `./DFIR-<Host>-<Date>` |
+| `-OpenReport` | Switch | Automatically opens generated HTML report in default browser | `$false` |
+| `-ExportCsv` | Switch | Exports analysis findings to normalized CSV | `$false` |
+
+---
+
+## 🛠️ Main Engine (`DFIR-Script.ps1`)
+
+The all-in-one triage engine collects forensic indicators across multiple dimensions, generates **SIEM-ready CSV files** in `CSV Results (SIEM Import Data)\`, and archives the entire output folder.
 
 ### Collected Artifacts
 
-| Category | Standard User | Elevated Privileges (Root / Sudo) |
+| Category | Standard User | Administrator (Elevated) |
 |:---|:---|:---|
-| **Identity & Users** | Current user environment, Shell histories (`.bash_history`, `.zsh_history`), Active sessions (`utmp`) | Full `/etc/shadow` hash audit, Sudoers NOPASSWD rules, Login history (`wtmp`, `btmp`) |
-| **Execution & Memory** | Userland process tree (`ps`), current user `/proc/[pid]/environ` | Complete `/proc` maps, `memfd_create` detection, **deleted running ELF binary quarantine** |
-| **Network & Comms** | Active sockets, TCP/UDP endpoints (`ss`/`netstat`), DNS resolvers | Promiscuous interfaces, Raw sockets, ARP tables, Firewall rules (`iptables`/`nftables`) |
-| **Kernel & Stealth** | `/proc/sys/kernel/tainted` read | Loaded LKMs (`lsmod`), eBPF filters (`bpftool`), `/proc` vs `ps` hidden process audit |
-| **Security Subsystems** | AppArmor / SELinux user status | AppArmor profile denials (`apparmor="DENIED"`), SELinux AVCs (`type=AVC`), Kernel mitigations |
-| **Cloud & Tunnels** | Tailscale/WireGuard user configs | AWS IMDSv2, Azure & GCP metadata, Cloud-Init logs, Chisel/Ngrok/Ligolo-ng reverse proxies |
-| **Dev Ecosystem & AI** | User NPM/PyPI tokens, AI chat histories (Claude, Cursor, Ollama) | Global Git hooks (`core.hooksPath`), Python `.pth` injection files, System mail queues |
+| **Identity & Users** | Active Users, Local Users | Full Registry Hives (`SAM`, `SYSTEM`, `SECURITY`, `SOFTWARE`, `NTUSER.DAT`) |
+| **Execution & History** | PSReadLine History (Current User), Run Keys, Startup Folder | PSReadLine History (All Users), Prefetch (`.pf`), Amcache, SRUM |
+| **Network & Comms** | Open TCP/UDP Connections, DNS Cache, Active SMB Shares, Office URLs | Remotely Opened Files (SMB sessions), Promiscuous interfaces |
+| **System & Persistence** | Running Services, Scheduled Tasks, Installed Drivers, Software List | Volume Shadow Copies (`VSS`), WMI Event Subscriptions |
+| **Security & Logs** | Active USB / PnP Devices, RDP Sessions | Windows Security Events (Logons 4624/4625, Process Creation 4688, MPLogs) |
+| **Browsers & AI** | Chrome, Edge, Brave, Firefox History, Claude / Cursor / Ollama configs | System-wide browser profiles, Token presence in environment |
 
 ---
 
 ## 📦 Script Catalog
 
-### 1. Acquisition (`Acquisition/`)
+### 1. Acquisition Modules (`Acquisition/`)
 
 | Script | Purpose | Key Parameters | Privilege |
 |:---|:---|:---|:---|
-| [`CollectNetworkTriage.sh`](./Acquisition/CollectNetworkTriage.sh) | Sockets (`ss`, `lsof`), active connections, routing tables, ARP cache, DNS resolvers, firewall rules, and eBPF filters | `$1` (TargetDir) | User / Root |
-| [`CollectExecutionArtifacts.sh`](./Acquisition/CollectExecutionArtifacts.sh) | Process trees, `/proc/[pid]/*`, cmdline, environ, memory maps, `memfd_create`, and **quarantine of deleted running binaries** | `$1` (TargetDir) | **Root** |
-| [`CollectPersistence.sh`](./Acquisition/CollectPersistence.sh) | Systemd services & timers, Crontabs, At jobs, `/etc/ld.so.preload` hijacking, shell hooks (`.bashrc`, `profile.d`), PAM, Udev | `$1` (TargetDir) | User / Root |
-| [`CollectUserActivity.sh`](./Acquisition/CollectUserActivity.sh) | Account audit, `/etc/shadow` hashes, sudoers rules, active sessions (`utmp`), `wtmp`/`btmp`, and shell command histories | `$1` (TargetDir) | **Root** |
-| [`CollectSSHArtifacts.sh`](./Acquisition/CollectSSHArtifacts.sh) | `authorized_keys`, `known_hosts`, OpenSSH server/client configs, private/public key inventory, and active SSH sessions | `$1` (TargetDir) | User / Root |
-| [`CollectBrowserArtifacts.sh`](./Acquisition/CollectBrowserArtifacts.sh) | Unified browser collector: SQLite histories, downloads, extensions for Chrome, Chromium, Firefox, Brave, Edge, Opera, Tor | `$1` (TargetDir) | User / Root |
-| [`CollectAIArtifacts.sh`](./Acquisition/CollectAIArtifacts.sh) | AI & LLM forensics: Ollama models, Claude Desktop/Code, Cursor, Windsurf, Copilot, LM Studio, Aider, API tokens | `$1` (TargetDir) | User / Root |
-| [`CollectSystemLogs.sh`](./Acquisition/CollectSystemLogs.sh) | Systemd journal (`journalctl`) with time-window filtering, `auth.log`, `audit.log`, `dmesg`, syslog, and web server logs | `$1` (TargetDir), `$2` (Days) | **Root** |
-| [`CollectSecuritySubsystems.sh`](./Acquisition/CollectSecuritySubsystems.sh) | AppArmor status & denials, SELinux status, AVC denials (`type=AVC`), booleans, and kernel mitigations (ASLR, Yama, Seccomp) | `$1` (TargetDir) | **Root** |
-| [`CollectHardwareAndContainers.sh`](./Acquisition/CollectHardwareAndContainers.sh) | Connected USB devices (`lsusb`), PCI (`lspci`), mount points (`fstab`), Docker, Podman, Kubernetes pods, and coredumps | `$1` (TargetDir) | User / Root |
-| [`CollectVPNAndTunnelingArtifacts.sh`](./Acquisition/CollectVPNAndTunnelingArtifacts.sh) | WireGuard, OpenVPN, Tailscale, ZeroTier, Cloudflare Tunnel, Ngrok, Chisel, FRP, Ligolo-ng, and IPsec policies | `$1` (TargetDir) | User / Root |
-| [`CollectCloudMetadata.sh`](./Acquisition/CollectCloudMetadata.sh) | Cloud instance identity & IAM credentials: AWS EC2 (IMDSv2), Azure VM IMDS, GCP metadata, Cloud-Init logs | `$1` (TargetDir) | User / Root |
-| [`CollectWebserverAndDatabaseArtifacts.sh`](./Acquisition/CollectWebserverAndDatabaseArtifacts.sh) | Configurations, SSL certs, `.htaccess`, Nginx, Apache, **Redis unauthenticated public binding check**, MySQL, PostgreSQL | `$1` (TargetDir) | **Root** |
-| [`CollectEBPFArtifacts.sh`](./Acquisition/CollectEBPFArtifacts.sh) | Loaded eBPF programs, maps, attached links, XDP, kprobes, tracepoints, `/sys/fs/bpf` objects (Symbiote, BPFDoor detection) | `$1` (TargetDir) | **Root** |
-| [`CollectDeveloperEcosystem.sh`](./Acquisition/CollectDeveloperEcosystem.sh) | Supply chain secrets: NPM (`.npmrc`), Python (`.pypirc`, `.pth` hooks), Cargo credentials, Git global hooks, tokens | `$1` (TargetDir) | User / Root |
-| [`CollectMailArtifacts.sh`](./Acquisition/CollectMailArtifacts.sh) | Mail transport agents (Postfix, Exim, Sendmail), active queues (`mailq`), spools, and `/etc/aliases` pipe injection audits | `$1` (TargetDir) | User / Root |
-| [`CollectDesktopArtifacts.sh`](./Acquisition/CollectDesktopArtifacts.sh) | Workstation forensics: `recently-used.xbel`, Linux Trash can files/metadata (`~/.local/share/Trash`), thumbnails, keyloggers | `$1` (TargetDir) | User / Root |
-| [`DumpProcessMemory.sh`](./Acquisition/DumpProcessMemory.sh) | Surgical memory dumper for suspect PIDs via `/proc/[pid]/mem` and `/proc/[pid]/maps` or `gcore` | `$1` (PID), `$2` (TargetDir) | **Root** |
-| [`CollectFileSystemArtifacts.sh`](./Acquisition/CollectFileSystemArtifacts.sh) | SUID/SGID binaries (GTFOBins audit), POSIX capabilities (`getcap`), `/tmp` staging files, hidden files, immutable flags (`+i`) | `$1` (TargetDir), `$2` (Days) | **Root** |
-| [`CollectRootkitIndicators.sh`](./Acquisition/CollectRootkitIndicators.sh) | LKM audit (out-of-tree `O`/unsigned `E`), kernel taint decode, hidden process detection (`/proc` vs `ps`), rootkit signatures | `$1` (TargetDir) | **Root** |
-| [`GenerateEvidenceManifest.sh`](./Acquisition/GenerateEvidenceManifest.sh) | Calculates SHA-256 hashes for all evidence files, generating `manifest.json` and `checksums.sha256` for Chain of Custody | `$1` (TargetDir) | User / Root |
-| [`ArchiveFolder.sh`](./Acquisition/ArchiveFolder.sh) | Forensic `.tar.gz` compression with strict timestamp preservation (`--atime-preserve`) and detached `.sha256` seal | `$1` (TargetDir), `$2` (Archive) | User / Root |
+| [`CollectAIArtifacts.ps1`](./Acquisition/CollectAIArtifacts.ps1) | Extracts AI/LLM desktop chat history, configs, API keys (Claude, ChatGPT, Cursor, Windsurf, Copilot, Ollama, Jan, LM Studio) | `-AllUsers`, `-OutputDir`, `-ExcludeModels` | User / Admin |
+| [`CollectActiveDirectoryArtifacts.ps1`](./Acquisition/CollectActiveDirectoryArtifacts.ps1) | DC Forensics: detects DC role, dumps NTDS.dit / BootKey, SYSVOL/GPOs, ADSI Kerberos surface (Kerberoasting, AS-REP, Delegation) | `-OutputDir`, `-DumpNTDS`, `-IncludeSYSVOL` | **Domain Admin** |
+| [`CollectVPNAndSockets.ps1`](./Acquisition/CollectVPNAndSockets.ps1) | Live TCP/UDP sockets mapped to process commands + VPN configs (Cisco, GlobalProtect, OpenVPN, FortiClient, WireGuard, Tailscale) | `-AllUsers`, `-IncludeLogs`, `-OutputDir` | User / Admin |
+| [`CollectSSHArtifacts.ps1`](./Acquisition/CollectSSHArtifacts.ps1) | Reconstructs lateral movement: OpenSSH configs, `known_hosts`, `authorized_keys`, PuTTY, WinSCP, MobaXterm sessions & keys | `-AllUsers`, `-CollectPrivateKeys`, `-OutputDir` | User / Admin |
+| [`CollectExecutionArtifacts.ps1`](./Acquisition/CollectExecutionArtifacts.ps1) | Gathers binary execution proof: Prefetch (`.pf`), SRUM (`SRUDB.dat`), BAM/DAM, and Amcache (`Amcache.hve`) | `-OutputDir`, `-PrefetchOnly` | **Admin** |
+| [`CollectTargetedEvtxLogs.ps1`](./Acquisition/CollectTargetedEvtxLogs.ps1) | Copies critical EVTX logs (Sysmon, PowerShell 4104/4103, TaskScheduler, RDP, Defender, Security, System) | `-OutputDir`, `-IncludeAllChannels` | **Admin** |
+| [`CollectWindowsEvents.ps1`](./Acquisition/CollectWindowsEvents.ps1) | Dumps Windows Event Log entries within a configured time window to CSV | `-Days`, `-OutputDir` | Admin |
+| [`CollectWindowsSecurityEvents.ps1`](./Acquisition/CollectWindowsSecurityEvents.ps1) | Extracts Security event logs (Logons 4624/4625, Process Creation 4688, User Mgmt) | `-Days`, `-OutputDir` | Admin |
+| [`DumpRegistryHives.ps1`](./Acquisition/DumpRegistryHives.ps1) | Dumps raw Windows Registry Hives (SAM, SYSTEM, SECURITY, SOFTWARE, DEFAULT, NTUSER.DAT, UsrClass.dat) | `-OutputDir`, `-SystemOnly`, `-UserOnly` | **Admin** |
+| [`CollectUserActivity.ps1`](./Acquisition/CollectUserActivity.ps1) | Collects LNK shortcuts, Jump Lists (`AutomaticDestinations`), and Recent file access across profiles | `-AllUsers`, `-OutputDir` | User / Admin |
+| [`CollectNetworkTriage.ps1`](./Acquisition/CollectNetworkTriage.ps1) | Captures volatile network state: DNS Client cache, ARP/Neighbor tables, IP routes, SMB sessions | `-OutputDir` | User / Admin |
+| [`CollectPSReadLineHistory.ps1`](./Acquisition/CollectPSReadLineHistory.ps1) | Collects `ConsoleHost_history.txt` across all user profiles | `-AllUsers`, `-OutputDir` | User / Admin |
+| [`CollectRDPArtifacts.ps1`](./Acquisition/CollectRDPArtifacts.ps1) | Collects RDP client credentials hints, Bitmap caches (`bcache*.bmc`), and Terminal Services logs | `-OutputDir` | User / Admin |
+| [`CollectBrowserArtifacts.ps1`](./Acquisition/CollectBrowserArtifacts.ps1) | Unified browser artifact collector (Edge, Chrome, Brave, Firefox, Opera) | `-AllUsers`, `-OutputDir` | User / Admin |
+| [`CollectLocalDefenderAlerts.ps1`](./Acquisition/CollectLocalDefenderAlerts.ps1) | Queries local Defender detection history via `Get-MpThreatDetection` | Console | User / Admin |
+| [`GenerateEvidenceManifest.ps1`](./Acquisition/GenerateEvidenceManifest.ps1) | Computes SHA-256 hashes for all evidence files and generates `manifest.json` for Chain of Custody | `-TargetDir`, `-OutputFile` | User / Admin |
+| [`FolderToStorageBlob.ps1`](./Acquisition/FolderToStorageBlob.ps1) | Direct HTTPS upload of evidence directory to Azure Storage Blob via SAS token | SAS Token / Storage Account | Contributor |
+| [`ExecuteKQLAdvancedHunting.ps1`](./Acquisition/ExecuteKQLAdvancedHunting.ps1) | Runs KQL queries against Microsoft Defender for Endpoint API via Graph (Interactive) | Inline `$KQL` | Graph API |
+| [`ExecuteKQLAdvancedHuntingServicePrincipal.ps1`](./Acquisition/ExecuteKQLAdvancedHuntingServicePrincipal.ps1) | Runs KQL queries against Defender API using App Registration / Service Principal | `-TenantId`, `-ClientId`, `-ClientSecret` | Graph API |
+| [`GetSecurityIncidents.ps1`](./Acquisition/GetSecurityIncidents.ps1) | Fetches active Microsoft Defender / Sentinel incidents via API | Graph API | Analyst |
+| [`ZipFolder.ps1`](./Acquisition/ZipFolder.ps1) | Utility script to compress folders into ZIP archives | `-SourcePath`, `-DestinationZip` | User |
+| *Browser Extractors* | Dedicated collectors for [Edge](./Acquisition/EdgeArtifacts.ps1), [Chromium](./Acquisition/ChromiumArtifacts.ps1), [Brave](./Acquisition/BraveArtifacts.ps1), [Firefox](./Acquisition/FirefoxArtifacts.ps1), [Opera](./Acquisition/OperaArtifacts.ps1) | `-AllUsers`, `-OutputDir` | User / Admin |
 
 ---
 
-### 2. Analysis & Threat Hunting (`Analysis/`)
+### 2. Analysis & Threat Hunting Modules (`Analysis/`)
 
 | Script / Guide | Purpose | Output / Mode |
 |:---|:---|:---|
-| [`Generate-DFIRHtmlReport.sh`](./Analysis/Generate-DFIRHtmlReport.sh) | Generates an interactive standalone HTML Forensic Dashboard from collected CSVs with metric cards, search, and alerts | HTML Report (`Report.html`) |
-| [`Generate-MACTimeline.sh`](./Analysis/Generate-MACTimeline.sh) | Generates a SleuthKit Bodyfile and supertimeline capturing Modified, Accessed, Changed, and Birth (MACB) timestamps | Bodyfile & CSV Timeline |
-| [`Generate-STIXReport.sh`](./Analysis/Generate-STIXReport.sh) | Converts collected indicators (hashes, C2 IPs, suspicious commands) into a **STIX 2.1 JSON Bundle** and MISP/OpenCTI CSV | JSON Bundle & CSV Feed |
-| [`DetectCryptominers.sh`](./Analysis/DetectCryptominers.sh) | Hunts for illicit miners: Stratum protocol connections (3333, 4444, etc.), fake `[kworker]` CPU hogs, and mining configs | Console / CSV (`-ExportCsv`) |
-| [`DetectLogTampering.sh`](./Analysis/DetectLogTampering.sh) | Anti-forensics detector: unlinked deleted logs held open in RAM (`/proc/*/fd`), truncated `wtmp`/`btmp`, `HISTFILE=/dev/null` | Console / CSV (`-ExportCsv`) |
-| [`DumpPrivilegedUsers.sh`](./Analysis/DumpPrivilegedUsers.sh) | Audits UID 0 accounts, administrative group members (sudo, wheel), `NOPASSWD` rules, and passwordless shadow accounts | Console / CSV (`-ExportCsv`) |
-| [`ListCronAndTimers.sh`](./Analysis/ListCronAndTimers.sh) | Consolidated tabular overview of all scheduled tasks (Systemd timers, crontabs, user cron, at jobs) | Console / CSV (`-ExportCsv`) |
-| [`ListNetworkListeners.sh`](./Analysis/ListNetworkListeners.sh) | Triage of listening ports with process names, PIDs, executable paths, and public exposure highlights | Console / CSV (`-ExportCsv`) |
-| [`ListPackageIntegrity.sh`](./Analysis/ListPackageIntegrity.sh) | Verifies cryptographic package checksums of key system binaries (`dpkg -V` / `rpm -Va` / `pacman -Qk`) | Console / CSV (`-ExportCsv`) |
-| [`ListKernelModules.sh`](./Analysis/ListKernelModules.sh) | Audits loaded kernel modules from `/proc/modules` and flags out-of-tree (`O`) or unsigned (`E`) LKMs | Console / CSV (`-ExportCsv`) |
-| [`ScanSuspiciousStaging.sh`](./Analysis/ScanSuspiciousStaging.sh) | Rapid scanner for world-writable staging directories (`/tmp`, `/dev/shm`) to detect ELF binaries, webshells, reverse shells | Console / CSV (`-ExportCsv`) |
+| [`Generate-DFIRHtmlReport.ps1`](./Analysis/Generate-DFIRHtmlReport.ps1) | Generates an interactive standalone HTML Forensic Dashboard from collected CSVs/ZIP with KPI cards, search, sorting, and alerts | HTML Report (`-OpenReport`) |
+| [`Get-NamedPipes.ps1`](./Analysis/Get-NamedPipes.ps1) | Enumerates Named Pipes & flags C2 patterns (*Cobalt Strike*, *Sliver*, *Meterpreter*, *PsExec*, *PAExec*) | Console / CSV (`-ExportCsv`) |
+| [`Get-WMIPersistence.ps1`](./Analysis/Get-WMIPersistence.ps1) | Audits WMI subscriptions (`__EventFilter`, `CommandLineEventConsumer`, bindings) for fileless persistence | Console / CSV (`-ExportCsv`) |
+| [`ListRootCertificates.ps1`](./Analysis/ListRootCertificates.ps1) | Audits LocalMachine and CurrentUser Root CA stores to detect rogue CA certificates or MitM inspection proxies | Console / CSV (`-ExportCsv`) |
+| [`ListInstalledSecurityProducts.ps1`](./Analysis/ListInstalledSecurityProducts.ps1) | Discovers Antivirus, AntiSpyware, and Firewall products & their real-time state via `SecurityCenter2` | Console |
+| [`ListDefenderExclusions.ps1`](./Analysis/ListDefenderExclusions.ps1) | Lists all configured Microsoft Defender path, extension, and process exclusions | Console |
+| [`ListVSCodeExtensions.ps1`](./Analysis/ListVSCodeExtensions.ps1) | Audits installed VS Code & Cursor extensions across user profiles (`-AllUsers`) | Console |
+| [`CollectPnPDevices.ps1`](./Analysis/CollectPnPDevices.ps1) | Lists connected and historical PnP/USB devices and hardware IDs | Console |
+| [`DumpLocalAdmins.ps1`](./Analysis/DumpLocalAdmins.ps1) | Discovers all members of the local `Administrators` group | Console |
+| [`LastLogons.ps1`](./Analysis/LastLogons.ps1) | Audits last user logon timestamps and interactive sessions | Console / CSV (`-ExportCsv`) |
+| [`PrefetchFiles.ps1`](./Analysis/PrefetchFiles.ps1) | Lists prefetch files (`.pf`), execution timestamps, and run counts | Console / CSV (`-ExportCsv`) |
+| [`RunMRUEntries.ps1`](./Analysis/RunMRUEntries.ps1) | Extracts Most Recently Used (`RunMRU`) registry entries | Console |
+| [`ExportBrowserExtensions.ps1`](./Analysis/ExportBrowserExtensions.ps1) | Packages installed browser extensions from Chrome, Edge, Brave, and Opera into a ZIP file for analysis | ZIP File in `$env:TEMP` |
+| [`DFIR-Commands.md`](./Analysis/DFIR-Commands.md) | Cheatsheet of standalone PowerShell commands and one-liners for live triage | Reference Guide |
 
 ---
 
 ### 3. Containment & Remediation (`Containment/`)
 
+> ⚠️ Cloud containment scripts require the `Microsoft.Graph` PowerShell module:  
+> `Install-Module Microsoft.Graph -Scope CurrentUser -Repository PSGallery -Force`
+
 | Script | Target | Action | Required Permissions |
 |:---|:---|:---|:---|
-| [`Isolate-Host.sh`](./Containment/Isolate-Host.sh) | **Host / Network** | **Host Isolation**: Emergency firewall isolation (`DROP all`) with SOC whitelist (`--allowed-ips`) and clean release (`--release`) | **Root** |
-| [`Kill-C2Threat.sh`](./Containment/Kill-C2Threat.sh) | **Processes & C2** | **Surgical Neutralization**: Terminates specific PIDs, blocks remote C2 IP in iptables, and quarantines malware binary | **Root** |
-| [`QuarantineArtifact.sh`](./Containment/QuarantineArtifact.sh) | **Malware / Files** | **Zero-Permission Isolation**: Moves file to `/var/dfir_quarantine`, strips perms (`chmod 000`), sets `chattr +i`, computes SHA-256 seal | **Root** |
-| [`EnableForensicAuditing.sh`](./Containment/EnableForensicAuditing.sh) | **Kernel Auditing** | **Live Audit Rule Injection**: Deploys high-resolution Auditd rules in RAM (execve, /etc, kmods, ptrace) without reboot | **Root** |
-| [`LocalUserResponse.sh`](./Containment/LocalUserResponse.sh) | **Compromised User** | **User Containment**: Locks password, expires account, disables shell to `/sbin/nologin`, quarantines SSH keys, kills processes | **Root** |
-| [`RevokeSessions.sh`](./Containment/RevokeSessions.sh) | **Active Sessions** | **Session Teardown**: Forcefully closes all remote interactive sessions (`pts/*`) and purges Kerberos ticket caches | **Root** |
+| [`Invoke-FullIdentityContainment.ps1`](./Containment/Invoke-FullIdentityContainment.ps1) | **Entra ID / M365** | **Cloud Playbook**: Disable account, revoke sessions, reset password, purge rogue MFA (FIDO2, Authenticator, Phone, TAP), revoke OAuth grants | Graph: `User.ReadWrite.All`, `UserAuthenticationMethod.ReadWrite.All`, `DelegatedPermissionGrant.ReadWrite.All` |
+| [`Isolate-Host.ps1`](./Containment/Isolate-Host.ps1) | **Host / Endpoint** | **Host Isolation**: Emergency firewall isolation (inbound/outbound with SOC whitelist), kill user processes, force session logoff, purge Kerberos tickets & credentials | **Local Administrator** |
+| [`Revoke-ADUserHybrid.ps1`](./Containment/Revoke-ADUserHybrid.ps1) | **Active Directory** | **AD / Hybrid Playbook**: Disable AD account (RSAT / ADSI fallback), reset password, strip admin groups, move to Quarantine OU | **Domain Admin** |
+| [`LocalUserResponse.ps1`](./Containment/LocalUserResponse.ps1) | Local Accounts | List accounts (`-List`), rotate password to random 20-char (`-Rotate <SID>`), kill user processes (`-Kill <SID>`), delete account (`-Delete <SID>`) | Local Administrator |
+| [`RevokeSessions.ps1`](./Containment/RevokeSessions.ps1) | Entra ID / M365 | Instantly invalidates all active OAuth tokens and sign-in sessions for target users | Graph: `User.RevokeSessions.All` |
+| [`ForcePasswordChangeNextSignIn.ps1`](./Containment/ForcePasswordChangeNextSignIn.ps1) | Entra ID / M365 | Generates temporary password & enforces reset on next sign-in | Graph: `UserAuthenticationMethod.ReadWrite.All` |
 
 ---
 
-## 🛡️ Remote Live Response Execution
+## 🛡️ Microsoft Defender for Endpoint (MDE) Live Response
 
-All scripts are dependency-free, POSIX-compliant, and ready to execute across SSH, Ansible, Salt, or cloud bastions.
+All scripts are lightweight, dependency-free, and ready to execute inside an **MDE Live Response** console.
+
+### Prerequisites
+1. Open **[security.microsoft.com](https://security.microsoft.com)** $\rightarrow$ **Settings** $\rightarrow$ **Endpoints** $\rightarrow$ **Advanced Features**.
+2. Turn ON **Live Response** and **Live Response unsigned script execution**.
 
 ### Execution Steps
 ```text
-1. Connect to remote host:     ssh root@target-host
-2. Transfer DFIR suite:        scp -r DFIR_bash/ root@target-host:/tmp/
-3. Execute automated triage:   sudo /tmp/DFIR_bash/DFIR-Script.sh -w 7 -c
-4. Download sealed evidence:   scp root@target-host:/tmp/DFIR-*.tar.gz ./
+1. Connect to device via Live Response.
+2. Upload script:         putfile DFIR-Script.ps1
+3. Execute triage:        run DFIR-Script.ps1 -parameters "-sw 10"
+4. Download evidence:     getfile DFIR-<Hostname>-<Date>.zip
 ```
 
 ---
 
-## 📊 SIEM Integration (CSV Schema)
+## 📊 SIEM Integration (CSV Schemas)
 
-The automated triage exports standard CSV files directly ingestible by **Splunk**, **Microsoft Sentinel**, **Elasticsearch**, or **Wazuh**:
+The automated triage exports standard CSV files directly ingestible by **Microsoft Sentinel**, **Splunk**, **Elastic**, or **ADX**:
 
 ```text
-CSV_Results (SIEM Import Data)/
-├── ActiveSessions.csv             ├── FileCapabilities.csv          ├── RouteTable.csv
-├── AITokenPresence.csv            ├── HiddenProcessAudit.csv        ├── ScheduledTasks.csv
-├── AIToolsDetected.csv            ├── KernelModulesAudit.csv        ├── SecurityEvents.csv
-├── AppArmorDenials.csv            ├── LocalUsers.csv                ├── SELinuxDenials.csv
-├── ARPTable.csv                   ├── LoginHistory.csv              ├── ShellHooks.csv
-├── BrowserDownloads.csv           ├── MACSubsystems.csv             ├── SSHAuthorizedKeys.csv
-├── BrowserExtensions.csv          ├── MailArtifacts.csv             ├── SSHKnownHosts.csv
-├── BrowserHistory.csv             ├── MemfdExecutions.csv           ├── StagingFiles.csv
-├── CommandHistory.csv             ├── MountPoints.csv               ├── SUIDBinaries.csv
-├── ConnectedDevices.csv           ├── NetworkInterfaces.csv         ├── SystemCoredumps.csv
-├── Containers.csv                 ├── OpenSockets.csv               ├── TrashArtifacts.csv
-├── DeletedRunningBinaries.csv     ├── PersistenceSummary.csv        └── TunnelingArtifacts.csv
-├── DeveloperEcosystem.csv         ├── Processes.csv                 └── WebAndDatabaseServers.csv
-└── EBPFPrograms.csv               └── RecentFiles.csv               └── RootkitIndicators.csv
+CSV Results (SIEM Import Data)/
+├── ActiveUsers.csv            ├── IPConfiguration.csv        ├── RunningServices.csv
+├── AutoRun.csv                ├── LocalUsers.csv             ├── ScheduledTasks.csv
+├── ConnectedDevices.csv       ├── NetworkShares.csv          ├── ScheduledTasksRunInfo.csv
+├── DefenderExclusions.csv     ├── OfficeConnections.csv      ├── SecurityEvents.csv
+├── DNSCache.csv               ├── OpenTCPConnections.csv     ├── ShadowCopy.csv
+├── Drivers.csv                ├── PowerShellHistory.csv      └── SMBShares.csv
+├── InstalledSoftware.csv      ├── Processes.csv
+└── RDPSessions.csv            └── RemotelyOpenedFiles.csv
 ```
 
 ---
 
-## 🛡 MITRE ATT&CK® Matrix for Linux
+## 🛡 MITRE ATT&CK® Matrix for Windows & Cloud
 
 | MITRE ATT&CK Tactic | Covered Techniques | Associated Modules |
 |---|---|---|
-| **Initial Access (TA0001)** | T1078 (Valid Accounts), T1133 (External Remote Services), T1190 (Exploit Public App), T1195 (Supply Chain) | `CollectSSHArtifacts.sh`, `CollectUserActivity.sh`, `CollectWebserverAndDatabaseArtifacts.sh`, `CollectDeveloperEcosystem.sh` |
-| **Execution (TA0002)** | T1059 (Command & Scripting Interpreter), T1053 (Scheduled Task/Job), T1610 (Deploy Container) | `CollectExecutionArtifacts.sh`, `CollectPersistence.sh`, `CollectHardwareAndContainers.sh` |
-| **Persistence (TA0003)** | T1543.002 (Systemd Service), T1053.003 (Cron), T1546.004 (.bashrc), T1574.006 (LD_PRELOAD), T1546.014 (eBPF) | `CollectPersistence.sh`, `CollectRootkitIndicators.sh`, `CollectEBPFArtifacts.sh` |
-| **Privilege Escalation (TA0004)** | T1548.001 (Setuid/Setgid), T1548.003 (Sudoers), T1068 (Priv Esc Exploitation), T1611 (Escape to Host) | `CollectFileSystemArtifacts.sh`, `DumpPrivilegedUsers.sh`, `CollectHardwareAndContainers.sh` |
-| **Defense Evasion (TA0005)** | T1070 (Indicator Removal), T1014 (Rootkit), T1620 (memfd_create), T1562.001 (Disable Tools), T1574.007 (eBPF rootkit) | `CollectRootkitIndicators.sh`, `CollectExecutionArtifacts.sh`, `CollectSecuritySubsystems.sh`, `DetectLogTampering.sh`, `CollectEBPFArtifacts.sh` |
-| **Credential Access (TA0006)** | T1003.008 (/etc/passwd and /etc/shadow), T1552.004 (Private Keys), T1552.005 (Cloud IMDS), T1555 (Credentials in Files) | `CollectUserActivity.sh`, `CollectSSHArtifacts.sh`, `CollectCloudMetadata.sh`, `CollectDeveloperEcosystem.sh`, `CollectAIArtifacts.sh` |
-| **Discovery (TA0007)** | T1082 (System Info), T1049 (Network Connections), T1057 (Process Discovery), T1613 (Container Discovery) | `CollectNetworkTriage.sh`, `CollectExecutionArtifacts.sh`, `CollectHardwareAndContainers.sh` |
-| **Command and Control (TA0011)** | T1071 (Application Layer Protocol), T1571 (Non-Standard Port), T1572 (Protocol Tunneling), T1090 (Proxy) | `CollectNetworkTriage.sh`, `CollectVPNAndTunnelingArtifacts.sh`, `ListNetworkListeners.sh` |
-| **Impact (TA0040)** | T1496 (Resource Hijacking / Cryptomining) | `DetectCryptominers.sh` |
+| **Initial Access (TA0001)** | T1078 (Valid Accounts), T1133 (External Remote Services), T1190 (Exploit Public-Facing App), T1566 (Phishing) | `CollectSSHArtifacts.ps1`, `CollectUserActivity.ps1`, `CollectVPNAndSockets.ps1` |
+| **Execution (TA0002)** | T1059.001 (PowerShell), T1047 (WMI), T1053.005 (Scheduled Task), T1569.002 (Service Execution) | `CollectExecutionArtifacts.ps1`, `CollectPSReadLineHistory.ps1`, `Get-WMIPersistence.ps1` |
+| **Persistence (TA0003)** | T1547.001 (Registry Run Keys), T1543.003 (Windows Service), T1546.003 (WMI Subscriptions), T1053.005 (Scheduled Task) | `Get-WMIPersistence.ps1`, `CollectExecutionArtifacts.ps1`, `DFIR-Script.ps1` |
+| **Privilege Escalation (TA0004)** | T1078.002 (Domain Accounts), T1548 (Abuse Elevation), T1068 (Priv Esc Exploitation) | `CollectActiveDirectoryArtifacts.ps1`, `DumpLocalAdmins.ps1` |
+| **Defense Evasion (TA0005)** | T1562.001 (Disable Defender / Exclusions), T1070 (Indicator Removal), T1553.004 (Install Root CA) | `ListDefenderExclusions.ps1`, `ListRootCertificates.ps1`, `CollectTargetedEvtxLogs.ps1` |
+| **Credential Access (TA0006)** | T1003.002 (SAM Dump), T1003.003 (NTDS.dit), T1558 (Kerberoasting / AS-REP), T1555 (Credentials in Files) | `DumpRegistryHives.ps1`, `CollectActiveDirectoryArtifacts.ps1`, `CollectAIArtifacts.ps1` |
+| **Discovery (TA0007)** | T1082 (System Info), T1049 (Network Connections), T1057 (Process Discovery), T1018 (Remote System Discovery) | `CollectNetworkTriage.ps1`, `Get-NamedPipes.ps1`, `CollectPnPDevices.ps1` |
+| **Lateral Movement (TA0008)** | T1021.001 (RDP), T1021.002 (SMB/Windows Admin Shares), T1021.004 (SSH) | `CollectRDPArtifacts.ps1`, `CollectSSHArtifacts.ps1`, `CollectVPNAndSockets.ps1` |
+| **Command and Control (TA0011)** | T1071 (Application Layer Protocol), T1571 (Non-Standard Port), T1090 (Proxy), T1572 (Protocol Tunneling) | `Get-NamedPipes.ps1`, `CollectVPNAndSockets.ps1` |
 
 ---
 
-## 🔒 Chain of Custody & Best Practices
+## 🔒 Chain of Custody & Forensic Best Practices
 
-1. **Execute from External Storage**: Point output to an external mount (`-o /mnt/external_drive`) to prevent altering unallocated space on the target host.
-2. **Never Reboot**: Do not restart the compromised system before capturing volatile memory artifacts (`/proc`, open sockets, eBPF maps, memory dumps).
-3. **Preserve Checksums & Digital Seals**: Retain the `checksums.sha256` and `.tar.gz.sha256` files for legal admissibility.
-4. **Use Strict Containment with Caution**: Emergency containment scripts (`Isolate-Host.sh`, `Kill-C2Threat.sh`, `LocalUserResponse.sh`) alter system state; ensure initial volatile memory collection is completed prior to triggering active containment.
+1. **Execute from External Storage**: Run scripts and write evidence to an external drive (`-OutputDir E:\Evidence`) to prevent overwriting unallocated disk clusters.
+2. **Preserve Volatile Memory First**: Capture memory, network sockets, and process state before acquiring persistent event logs.
+3. **Validate Cryptographic Seals**: Maintain the generated `manifest.json` and `.zip` SHA-256 hashes to establish proof of evidence integrity for judicial admissibility.
+4. **Use Containment with Discretion**: Active remediation (`Invoke-FullIdentityContainment.ps1`, `Isolate-Host.ps1`) should only be executed once initial volatile evidence has been acquired.
 
 ---
 
-## 📄 License
+## 📄 License & Attribution
 
 This project is licensed under the **[BSD 3-Clause License](./LICENSE)**.  
-Copyright (c) 2026, [Bellk0ruh](https://github.com/Bellk0ruh). All rights reserved.
+Copyright (c) 2026, **Bellk0ruh** & contributors. All rights reserved.
